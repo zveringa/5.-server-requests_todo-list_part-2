@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
 import axios from 'axios';
 import './Todo.css';
+import { DetailedTask } from './components';
 
 const Todo = () => {
   const [todos, setTodos] = useState([]);
@@ -56,39 +58,47 @@ const Todo = () => {
     ? [...filteredTodos].sort((a, b) => a.title.localeCompare(b.title))
     : filteredTodos;
 
+
   return (
     <div className="todo-container">
-      <h1>Todo List</h1>
-      <div className="controls">
-        <input
-          type="text"
-          placeholder="New todo"
-          value={newTodo}
-          onChange={e => setNewTodo(e.target.value)}
-        />
-        <button onClick={addTodo}>Add</button>
-        <input
-          type="text"
-          placeholder="Search todos"
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-        />
-        <button onClick={() => setIsSorted(!isSorted)}>
-          {isSorted ? 'Unsort' : 'Sort Alphabetically'}
-        </button>
+      <div>
+        <h1>Todo List</h1>
+        <div className="controls">
+          <input
+            type="text"
+            placeholder="New todo"
+            value={newTodo}
+            onChange={e => setNewTodo(e.target.value)}
+          />
+          <button onClick={addTodo}>Add</button>
+          <input
+            type="text"
+            placeholder="Search todos"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+          <button onClick={() => setIsSorted(!isSorted)}>
+            {isSorted ? 'Unsort' : 'Sort Alphabetically'}
+          </button>
+        </div>
+        <ul className="todo-list">
+          {sortedTodos.map(todo => (
+            <li key={todo.id} className="todo-item">
+              <Link to={`/todos/${todo.id}`}
+                className='task-field'
+                type="url"
+                value={todo.title}
+                onChange={e => updateTodo(todo.id, e.target.value)}
+              >{todo.title}</Link>
+
+              <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul className="todo-list">
-        {sortedTodos.map(todo => (
-          <li key={todo.id} className="todo-item">
-            <input
-              type="text"
-              value={todo.title}
-              onChange={e => updateTodo(todo.id, e.target.value)}
-            />
-            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      <Routes>
+        <Route path={`/todos/${todo.id}`} element={<DetailedTask />} />
+      </Routes>
     </div>
   );
 };
