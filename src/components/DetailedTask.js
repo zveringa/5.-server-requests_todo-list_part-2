@@ -1,15 +1,15 @@
-
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-const TaskDetailsPage = () => {
-    const { taskId } = useParams();
+const DetailedTask = ({ todos }) => {
+	const { id } = useParams();
+	const todo = todos[id];
 
-    return (
-        <div>
-            { }
-        </div>
-    );
+	return (
+		<div className="detailed-task">
+			<p>{todo}</p>
+		</div>
+	);
 };
 
-export default DetailedTask;
+export { DetailedTask };
