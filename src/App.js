@@ -1,12 +1,20 @@
 import React from 'react';
-import Todo from './Todo';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Todo from './components/Todo';
+import TaskDetailed from './pages/TaskDetailed';
+import NotFoundPage from './pages/NotFoundPage';
 
-function App() {
+const App = () => {
 	return (
-		<div className="App">
-			<Todo />
-		</div>
+		<Router>
+			<Routes>
+				<Route path="/" element={<Todo />} />
+				<Route path="/task/:id" element={<TaskDetailed />} />
+				<Route path="/404" element={<NotFoundPage />} />
+				{/* <Route path="*" element={<NotFoundPage />} /> */}
+			</Routes>
+		</Router>
 	);
-}
+};
 
 export default App;

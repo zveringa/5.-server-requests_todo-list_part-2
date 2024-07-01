@@ -1,84 +1,44 @@
 .todo-container {
-    width: 50%;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    text-align: center;
-    color: #333;
+	width: 600px;
+	margin: 0 auto;
 }
 
 .controls {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.controls input {
-    width: 70%;
-    padding: 10px;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.controls button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-}
-
-.controls button:hover {
-    background-color: #0056b3;
+	display: flex;
+	gap: 10px;
+	margin-bottom: 20px;
 }
 
 .todo-list {
-    list-style-type: none;
-    padding: 0;
+	list-style-type: none;
+	padding: 20;
 }
 
 .todo-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 10px;
+	background-color: rgb(242, 239, 233);
 }
 
-.todo-item:last-child {
-    border-bottom: none;
+.todo-link {
+	text-decoration: none;
+	color: black;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 500px;
+	display: inline-block;
 }
 
-.todo-item input {
-    width: 80%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.task-detail-container {
+	width: 1000px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: rgb(242, 239, 233);
 }
 
-.todo-item button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #dc3545;
-    color: white;
-    cursor: pointer;
-}
-
-.todo-item button:hover {
-    background-color: #c82333;
-}
-
-.task-field {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.task-detail-container button {
+	margin-right: 10px;
 }
