@@ -1,28 +1,47 @@
-import { useRef, useState } from 'react';
-
+import { useRef } from 'react';
+import { useStateManager } from '../../../../state-manager';
 import styles from './search.module.css';
 import { debounce } from './utils';
 
-export const Search = ({ onSearch }) => {
-	const [value, setValue] = useState('');
-	const debouncedOnSearch = useRef(debounce(onSearch, 1500)).current;
+export const Search = () => {
+	const {
+		state: {
+			options: { searchInput, isAbcSorting },
+		},
+		updateState,
+	} = useStateManager();
+
+	const runSearch = (phrase, sorting) => {
+		updateState({
+			options: {
+				searchInput: phrase,
+				searchPhrase: phrase,
+				isAbcSorting: sorting,
+			},
+		});
+	};
+
+	const debouncedRunSearch = useRef(debounce(runSearch, 1500)).current;
 
 	const onChange = ({ target }) => {
-		setValue(target.value);
-
-		debouncedOnSearch(target.value);
+		updateState({
+			options: {
+				searchInput: target.value,
+			},
+		});
+		debouncedRunSearch(target.value, isAbcSorting);
 	};
 
 	const onSubmit = (event) => {
 		event.preventDefault();
-		onSearch(value);
+		runSearch(searchInput);
 	};
 	return (
 		<form className={styles.search} onSubmit={onSubmit}>
 			<input
 				className={styles.input}
 				type="text"
-				value={value}
+				value={searchInput}
 				placeholder="Search..."
 				onChange={onChange}
 			/>
