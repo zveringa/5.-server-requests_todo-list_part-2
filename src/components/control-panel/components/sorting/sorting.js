@@ -1,21 +1,15 @@
 import styles from './sorting.module.css';
 import { Button } from '../../../button/button';
-import { useStateManager } from '../../../../state-manager';
+import { ACTION_TYPE } from '../../../../actions';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectIsAbcSorting } from '../../../../selectors';
 
 export const Sorting = () => {
-	const {
-		state: {
-			options: { isAbcSorting },
-		},
-		updateState,
-	} = useStateManager();
+	const isAbcSorting = useSelector(selectIsAbcSorting);
+	const dispatch = useDispatch();
 
 	const onChange = ({ target }) => {
-		updateState({
-			options: {
-				isAbcSorting: target.checked,
-			},
-		});
+		dispatch({ type: ACTION_TYPE.SET_IS_ABC_SORTING, payload: target.checked });
 	};
 	return (
 		<Button>

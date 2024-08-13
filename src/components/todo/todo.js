@@ -1,59 +1,50 @@
 import { Button } from '../button/button';
-import { createTodo, deleteTodo, updateTodo } from '../../api';
-import { useStateManager } from '../../state-manager';
 import { KEYBOARD, NEW_TODO_ID } from '../../constants';
 import styles from './todo.module.css';
+import {
+	ACTION_TYPE,
+	deleteTodoAsynch,
+	createTodoAsynch,
+	updateTodoAsynch,
+} from '../../actions';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+	selectEditingTodoId,
+	selectEditingTodoTitle,
+	selectIsLoading,
+} from '../../selectors';
 
 export const Todo = ({ id, title, completed }) => {
-	const {
-		state: {
-			editingTodo: { id: editingTodoId, title: editingTodoTitle },
-			options: { isLoading },
-		},
-		updateState,
-	} = useStateManager();
+	const editingTodoId = useSelector(selectEditingTodoId);
+	const editingTodoTitle = useSelector(selectEditingTodoTitle);
+	const isLoading = useSelector(selectIsLoading);
+	const dispatch = useDispatch();
 
 	const isEditing = id === editingTodoId;
 
 	const onEdit = () => {
-		if (id === NEW_TODO_ID) {
-			updateState({ editingTodo: { id, title } });
-		} else {
-			updateState({
-				todos: [{ id: NEW_TODO_ID }],
-				editingTodo: { id, title },
-			});
+		dispatch({ type: ACTION_TYPE.EDIT_TODO, payload: { id, title } });
+
+		if (id !== NEW_TODO_ID) {
+			dispatch({ type: ACTION_TYPE.REMOVE_TODO, payload: NEW_TODO_ID });
 		}
 	};
 
 	const onTitleChange = ({ target }) => {
-		updateState({ editingTodo: { title: target.value } });
+		dispatch({ type: ACTION_TYPE.EDIT_TODO, payload: { title: target.value } });
 	};
-
 	const onCompletedChange = ({ target: { checked } }) => {
-		updateState({ options: { isLoading: true } });
-
-		updateTodo({ id, completed: checked }).then(() => {
-			updateState({
-				todos: [{ id, completed: checked }],
-				options: { isLoading: false },
-			});
-		});
+		dispatch(updateTodoAsynch({ id, completed: checked }));
 	};
 
 	const onNewTodoSave = () => {
 		if (editingTodoTitle.trim() === '') {
-			updateState({ todos: [{ id }] });
+			dispatch({ type: ACTION_TYPE.REMOVE_TODO, payload: id });
 
 			return;
 		}
 
-		createTodo({ title: editingTodoTitle, completed }).then((todo) => {
-			updateState({
-				todos: [{ id: NEW_TODO_ID }, todo],
-				options: { isLoading: false },
-			});
-		});
+		dispatch(createTodoAsynch({ title: editingTodoTitle, completed }));
 	};
 
 	const onEditingTodoSave = () => {
@@ -63,18 +54,12 @@ export const Todo = ({ id, title, completed }) => {
 			return;
 		}
 
-		updateTodo({ id, title: editingTodoTitle }).then(() => {
-			updateState({
-				todos: [{ id, title: editingTodoTitle }],
-				editingTodo: { id: null },
-				options: { isLoading: false },
-			});
+		dispatch(updateTodoAsynch({ id, title: editingTodoTitle })).then(() => {
+			dispatch({ type: ACTION_TYPE.EDIT_TODO, payload: { id: null } });
 		});
 	};
 
 	const onSave = () => {
-		updateState({ options: { isLoading: true } });
-
 		if (id === NEW_TODO_ID) {
 			onNewTodoSave();
 		} else {
@@ -83,24 +68,17 @@ export const Todo = ({ id, title, completed }) => {
 	};
 
 	const onRemove = () => {
-		updateState({ options: { isLoading: true } });
-
-		deleteTodo(id).then(() =>
-			updateState({
-				todos: [{ id }],
-				options: { isLoading: false },
-			}),
-		);
+		dispatch(deleteTodoAsynch(id));
 	};
 
 	const onTitleKeyDown = ({ key }) => {
 		if (key === KEYBOARD.ENTER) {
 			onSave();
 		} else if (key === KEYBOARD.ESCAPE) {
+			dispatch({ type: ACTION_TYPE.EDIT_TODO, payload: { id: null } });
+
 			if (id === NEW_TODO_ID) {
-				updateState({ todos: [{ id }], editingTodo: { id: null } });
-			} else {
-				updateState({ editingTodo: { id: null } });
+				dispatch({ type: ACTION_TYPE.REMOVE_TODO, payload: id });
 			}
 		}
 	};

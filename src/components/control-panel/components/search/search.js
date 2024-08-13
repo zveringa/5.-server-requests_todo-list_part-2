@@ -1,35 +1,24 @@
 import { useRef } from 'react';
-import { useStateManager } from '../../../../state-manager';
+import { selectSearchInput } from '../../../../selectors';
 import styles from './search.module.css';
 import { debounce } from './utils';
+import { useSelector, useDispatch } from 'react-redux';
+import { ACTION_TYPE } from '../../../../actions';
 
 export const Search = () => {
-	const {
-		state: {
-			options: { searchInput, isAbcSorting },
-		},
-		updateState,
-	} = useStateManager();
+	const searchInput = useSelector(selectSearchInput);
+	const dispatch = useDispatch();
 
-	const runSearch = (phrase, sorting) => {
-		updateState({
-			options: {
-				searchInput: phrase,
-				searchPhrase: phrase,
-				isAbcSorting: sorting,
-			},
-		});
+	const runSearch = (phrase) => {
+		dispatch({ type: ACTION_TYPE.SET_SEARCH_PHRASE, payload: phrase });
 	};
 
 	const debouncedRunSearch = useRef(debounce(runSearch, 1500)).current;
 
 	const onChange = ({ target }) => {
-		updateState({
-			options: {
-				searchInput: target.value,
-			},
-		});
-		debouncedRunSearch(target.value, isAbcSorting);
+		dispatch({ type: ACTION_TYPE.SET_SEARCH_INPUT, payload: target.value });
+
+		debouncedRunSearch(target.value);
 	};
 
 	const onSubmit = (event) => {
